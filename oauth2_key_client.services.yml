@@ -1,4 +1,0 @@
-services:
-  plugin.manager.oauth2_key_client:
-    class: Drupal\oauth2_key_client\Oauth2KeyClientPluginManager
-    parent: default_plugin_manager

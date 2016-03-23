@@ -1,6 +1,0 @@
-name: oauth2_key_client
-type: module
-description: TODO: Write description for the module
-package: custom
-version: 8.x-1.0-dev
-core: 8.x

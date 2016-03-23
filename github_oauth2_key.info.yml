@@ -1,0 +1,9 @@
+name: Github Oauth2 Key
+type: module
+description: adds the league github oauth library for creating keys as oauth2_key_client plugin
+core: 8.x
+package: webservices
+dependencies:
+  - oauth2_key_client
+  - oauth2_key
+  - key

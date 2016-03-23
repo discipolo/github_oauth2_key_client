@@ -1,0 +1,16 @@
+{
+  "name": "drupal/github_oauth2_key",
+  "type": "drupal-module",
+  "description": "adds the league github oauth library for creating keys",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/github_oauth2_key",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/github_oauth2_key",
+    "source": "http://cgit.drupalcode.org/github_oauth2_key"
+  },
+  "require": {
+    "league/oauth2-github": "*"
+  }
+}
