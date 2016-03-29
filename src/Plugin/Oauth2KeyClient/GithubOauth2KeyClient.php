@@ -36,9 +36,7 @@ class GithubOauth2KeyClient extends Oauth2KeyClientPluginBase {
       'clientSecret'      => $configuration['consumer_secret'],
       'redirectUri'       => $configuration['redirect_url'],
     ]);
-    kint($this->provider);
 
-    // lets load the client from the library
 
 
   }
@@ -50,13 +48,15 @@ class GithubOauth2KeyClient extends Oauth2KeyClientPluginBase {
 
 
 public function createKeyEntity(){
-  $access_token = $this->fetchAccessToken();
-  kint($access_token);
+  $token = $this->fetchAccessToken();
+  kint($token);
+  kint($token->getRefreshToken());
+  kint($token->getToken());
   // assuming we got a token we need to create a new key
 
     $key = Key::create(array(
       // name the key after the authorization
-      'id' => 'testkey',
+      'id' => 'testkey2',
       'label' => 'testkey',
       'description' => 'testkey',
       'key_type' => 'oauth2',
@@ -66,8 +66,8 @@ public function createKeyEntity(){
       'key_provider' => 'config',
       'key_provider_settings' =>
         array (
-          'access_token' => $access_token,
-          //'refresh_token' => $refresh_token,
+          'access_token' => $token->getToken(),
+          'refresh_token' => $token->getRefreshToken(),
         ),
       'key_input' => 'oauth2',
       'key_input_settings' =>
@@ -100,8 +100,6 @@ public function createKeyEntity(){
    * @DCG: Optional.
    */
   public function fetchAccessToken() {
-// lets try client credentials first (because i am not sure right now why code grant fails)
-
 
     // in this case we are trying to use the auth code grant
 
@@ -115,17 +113,16 @@ public function createKeyEntity(){
       kint('redirecting to ' . $authUrl);
       $response->send();
       // no idea why header doesnt work, redirect differenctly
-      header('Location: '.$authUrl);
+      //header('Location: '.$authUrl);
 
       // Try to get an access token (using the authorization code grant)
       $token = $this->provider->getAccessToken('authorization_code', [
         'code' => $_GET['code']
       ]);
-      // TODO: figure out whats wrong here .. it fails ... related to redirect url? we should be redirected to the authorization
 
       exit;
 
-// Check given state against previously stored one to mitigate CSRF attack
+      // Check given state against previously stored one to mitigate CSRF attack
     } elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
 
       unset($_SESSION['oauth2state']);
