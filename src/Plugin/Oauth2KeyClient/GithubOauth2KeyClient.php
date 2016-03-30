@@ -26,10 +26,24 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class GithubOauth2KeyClient extends Oauth2KeyClientPluginBase {
 
-
+  /**
+   * @param array $configuration
+   * @param string $plugn_id
+   * @param mixed $plugin_definition
+   */
   public function __construct(array $configuration, $plugn_id, $plugin_definition ){
 
     parent::__construct($configuration, $plugn_id, $plugin_definition);
+    $this->key = new Key(
+      array(
+      'id' => 'testkey2',
+      'label' => 'testkey',
+      'description' => 'testkey',
+      'key_type' => 'oauth2',
+      'key_input' => 'oauth2',
+      ),
+      'key'
+    );
 
     $this->provider = new Github([
       'clientId'          => $configuration['consumer_key'],
@@ -49,32 +63,41 @@ class GithubOauth2KeyClient extends Oauth2KeyClientPluginBase {
 
 public function createKeyEntity(){
   $token = $this->fetchAccessToken();
+  $access_token = $token->getToken();
+  $refresh_token = $token->getRefreshToken();
   kint($token);
-  kint($token->getRefreshToken());
-  kint($token->getToken());
+  kint($refresh_token);
+  kint($access_token);
   // assuming we got a token we need to create a new key
 
-    $key = Key::create(array(
-      // name the key after the authorization
-      'id' => 'testkey2',
-      'label' => 'testkey',
-      'description' => 'testkey',
-      'key_type' => 'oauth2',
-      'key_type_settings' =>
-        array (
-        ),
-      'key_provider' => 'config',
-      'key_provider_settings' =>
-        array (
-          'access_token' => $token->getToken(),
-          'refresh_token' => $token->getRefreshToken(),
-        ),
-      'key_input' => 'oauth2',
-      'key_input_settings' =>
-        array (
-        ),
-    ));
-    return $key->save();
+//    $this->key = Key::create(array(
+//      // name the key after the authorization
+//      'id' => 'testkey2',
+//      'label' => 'testkey',
+//      'description' => 'testkey',
+//      'key_type' => 'oauth2',
+//      'key_type_settings' =>
+//        array (
+//        ),
+//      'key_provider' => 'config',
+//      'keyValue' =>
+//        array (
+//          'access_token' => $token->getToken(),
+//          'refresh_token' => $token->getRefreshToken(),
+//        ),
+//      'key_input' => 'oauth2',
+//      'key_input_settings' =>
+//        array (
+//        ),
+//    ));
+  $this->key->setKeyValue($token->getToken()
+  // TODO: the default key providers only take a string for key_value. discuss this
+  //array (
+  //    'access_token' => $token->getToken(),
+  //    'refresh_token' => $token->getRefreshToken(),
+  //)
+);
+    return $this->key;
 
 }
 
@@ -116,9 +139,6 @@ public function createKeyEntity(){
       //header('Location: '.$authUrl);
 
       // Try to get an access token (using the authorization code grant)
-      $token = $this->provider->getAccessToken('authorization_code', [
-        'code' => $_GET['code']
-      ]);
 
       exit;
 
